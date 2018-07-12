@@ -1,59 +1,45 @@
 <template>
-  <section class="container">
-    <div>
-      <logo/>
-      <h1 class="title">
-        pull
-      </h1>
-      <h2 class="subtitle">
-        My top-notch Nuxt.js project
-      </h2>
-      <div class="links">
-        <a href="https://nuxtjs.org/" target="_blank" class="button--green">Documentation</a>
-        <a href="https://github.com/nuxt/nuxt.js" target="_blank" class="button--grey">GitHub</a>
-      </div>
-    </div>
-  </section>
+<div v-html="data">
+</div>
 </template>
-
 <script>
-import Logo from '~/components/Logo.vue'
-
+let axios = require('axios');
+let getUrls = require('get-urls');
+let cheerio = require('cheerio');
+let path = require('path');
+let sanitize = require('sanitize-filename');
+let striptags = require('striptags');
+let strip = function(string) {
+	return string.replace(/[<>'"();]/gi, '');
+}
 export default {
-  components: {
-    Logo
-  }
+	async asyncData({ params }) {
+		let { data } = await axios.get('https://food.berkeley.edu');
+		const $ = cheerio.load(data);
+		let body = $('body').html();
+		let matches = body.match(/\bhttps?:\/\/\S+/gi);
+		let clean = [];
+		matches.forEach(match=>{
+			clean.push(strip(striptags(match)));
+		});
+		let imgMime = ['.jpg','.png','.gif','.svg'];
+		clean.forEach(async url=>{
+			let ext = path.extname(url);
+			if(imgMime.includes(ext)) {
+				let parsed = path.parse(url);
+				console.log(url);
+				body = body.replace(parsed.dir+'/'+parsed.base,parsed.base);
+			}
+		});
+
+		//let urls = getUrls(data);
+		//let clean = [];
+		//urls.forEach(url=>{
+		//		clean.push(decodeURI(url));
+		//});
+		//console.log(clean);
+		
+		return { data: body }
+	}
 }
 </script>
-
-<style>
-.container
-{
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-.title
-{
-  font-family: "Quicksand", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* 1 */
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-.subtitle
-{
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-.links
-{
-  padding-top: 15px;
-}
-</style>

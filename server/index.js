@@ -35,9 +35,9 @@ app.use('/',async function(req,res,next) {
 		});
 		console.log(clean);
 		clean.forEach(async url=>{
-			let { data } = await axios.get(url,{responseType:"blob"});	
+			let { data } = await axios.get(url,{responseType:"arraybuffer"});	
 			let name = path.basename(url);
-        		fs.writeFile('/scrape/'+name,data,function(err){
+        		fs.writeFile('static/'+name,data,function(err){
         		        if(err)
         		      	  return console.log(err);
         		        console.log('writ');
