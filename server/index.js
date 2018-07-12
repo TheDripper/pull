@@ -27,20 +27,21 @@ app.use('/',async function(req,res,next) {
 	  if(req.url=='/') {
         	let { data } = await axios('http://food.berkeley.edu');
 		let clean = [];
-		let mime = ['.png','.jpg','.gif','.svg'];
+		let mime = ['.png','.jpg','.gif','.svg','.css'];
 		urls(data).forEach(url=>{
+			console.log(url);
+			url = url.split('?')[0];
 			let ext = path.extname(prep(url));
+			console.log(ext);
 			if(mime.includes(ext))
 				clean.push(nospec(decodeURI(strip(url))));
 		});
-		console.log(clean);
 		clean.forEach(async url=>{
 			let { data } = await axios.get(url,{responseType:"arraybuffer"});	
 			let name = path.basename(url);
         		fs.writeFile('static/'+name,data,function(err){
         		        if(err)
         		      	  return console.log(err);
-        		        console.log('writ');
         		});
 		});
 	  }

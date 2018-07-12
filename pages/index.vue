@@ -5,7 +5,6 @@
 <script>
 let axios = require('axios');
 let getUrls = require('get-urls');
-let cheerio = require('cheerio');
 let path = require('path');
 let sanitize = require('sanitize-filename');
 let striptags = require('striptags');
@@ -15,9 +14,7 @@ let strip = function(string) {
 export default {
 	async asyncData({ params }) {
 		let { data } = await axios.get('https://food.berkeley.edu');
-		const $ = cheerio.load(data);
-		let body = $('body').html();
-		let matches = body.match(/\bhttps?:\/\/\S+/gi);
+		let matches = data.match(/\bhttps?:\/\/\S+/gi);
 		let clean = [];
 		matches.forEach(match=>{
 			clean.push(strip(striptags(match)));
@@ -28,18 +25,12 @@ export default {
 			if(imgMime.includes(ext)) {
 				let parsed = path.parse(url);
 				console.log(url);
-				body = body.replace(parsed.dir+'/'+parsed.base,parsed.base);
+				data = data.replace(parsed.dir+'/'+parsed.base,parsed.base);
+				console.log('what');
 			}
 		});
 
-		//let urls = getUrls(data);
-		//let clean = [];
-		//urls.forEach(url=>{
-		//		clean.push(decodeURI(url));
-		//});
-		//console.log(clean);
-		
-		return { data: body }
+		return { data: data }
 	}
 }
 </script>
