@@ -1,0 +1,15 @@
+https://use.typekit.net/isd2prf.js
+https://newomics.com/wp-content/plugins/wp-pagenavi/pagenavi-css.css
+https://newomics.com/wp-content/themes/ccprototypev5/css/cc-style.css
+https://newomics.com/wp-includes/js/jquery/jquery.js
+https://newomics.com/wp-includes/js/jquery/jquery-migrate.min.js
+https://newomics.com/wp-content/uploads/2017/06/Newomics_logo.jpg
+https://newomics.com/wp-content/uploads/2017/06/0I6A2841_1-e1507064666780.jpg
+https://newomics.com/wp-content/uploads/2014/03/0I6A2735.jpg
+https://newomics.com/wp-content/uploads/2018/05/0I6A1573_1.jpg
+https://newomics.com/wp-content/uploads/2014/03/0I6A2805-e1507065138304.jpg
+https://newomics.com/wp-content/uploads/2017/06/back-5.png
+https://newomics.com/wp-content/uploads/2017/06/fwd-1.png
+https://newomics.com/wp-content/uploads/2017/06/footlogo.png
+https://newomics.com/wp-content/themes/ccprototypev5/js/cc-script-dist.js
+https://newomics.com/wp-includes/js/wp-embed.min.js

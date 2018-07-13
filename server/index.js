@@ -13,7 +13,7 @@ const nospec = function(string) {
 	return string.replace(/[<>'"();]/gi, '');
 }
 const prep = function(url) {
-	return nospec(decodeURI(strip(url)));
+	return nospec(strip(decodeURI(url)));
 }
 
 app.set('port', port)
@@ -25,25 +25,38 @@ config.dev = !(process.env.NODE_ENV === 'production')
 app.use('/',async function(req,res,next) {
 	  //var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
 	  if(req.url=='/') {
-        	let { data } = await axios('http://food.berkeley.edu');
+        	let { data } = await axios('http://www.newomics.com');
 		let clean = [];
-		let mime = ['.png','.jpg','.gif','.svg','.css'];
+		let mime = ['.png','.jpg','.gif','.svg','.css','.js'];
 		urls(data).forEach(url=>{
-			console.log(url);
-			url = url.split('?')[0];
-			let ext = path.extname(prep(url));
-			console.log(ext);
-			if(mime.includes(ext))
+			url = prep(url).split('?')[0].replace('https','http');
+			let ext = path.extname(url);
+			if(mime.includes(ext)) {
 				clean.push(nospec(decodeURI(strip(url))));
+			}
 		});
 		clean.forEach(async url=>{
-			let { data } = await axios.get(url,{responseType:"arraybuffer"});	
-			let name = path.basename(url);
-        		fs.writeFile('static/'+name,data,function(err){
-        		        if(err)
-        		      	  return console.log(err);
-        		});
+			let ext = path.extname(url);
+			try {
+				let { data } = await axios.get(url,{responseType:"arraybuffer"});
+				let name = path.basename(url);
+				fs.writeFile('static/'+name,data,function(err){
+        			        if(err)
+        			      	  return log.write(err);
+        			});
+			} catch(err) {
+			}
 		});
+		//let log = fs.createWriteStream('error.txt');
+		//clean.forEach(async url=>{
+		//	try {
+		//	} catch(err) {
+		//		log.write('err');
+		//	}
+		//	log.write(data);
+        	
+		//});
+		//log.end();
 	  }
         next();
 })
