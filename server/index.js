@@ -47,19 +47,19 @@ app.use('/',async function(req,res,next) {
 			} catch(err) {
 			}
 		});
-		//let log = fs.createWriteStream('error.txt');
-		//clean.forEach(async url=>{
-		//	try {
-		//	} catch(err) {
-		//		log.write('err');
-		//	}
-		//	log.write(data);
-        	
-		//});
-		//log.end();
 	  }
         next();
 })
+
+app.use('/css',function(req,res,next){
+	let css = [];
+	fs.readdirSync('./static/').forEach(file=>{
+		ext = path.extname(file);
+		if(ext=='.css')
+			css.push(file);
+	});
+	res.send(JSON.stringify(css));
+});
 
 async function start() {
   // Init Nuxt.js

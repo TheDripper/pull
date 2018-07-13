@@ -8,6 +8,7 @@ let getUrls = require('get-urls');
 let path = require('path');
 let sanitize = require('sanitize-filename');
 let strip = require('striptags');
+let cheerio = require('cheerio');
 const nospec = function(string) {
 	return string.replace(/[<>'"();]/gi, '');
 }
@@ -19,7 +20,7 @@ const getFiles = async function(data,type) {
 	let matches = data.match(/\bhttps?:\/\/\S+/gi);
 	let clean = [];
 	matches.forEach(url=>{
-		url = prep(url).split('?')[0].replace('https','http');
+		url = prep(url).split('?')[0];
 		let ext = path.extname(url);
 		let imgMime = ['.jpg','.png','.gif','.svg'];
 		if(type=='all'||type=='image'&&imgMime.includes(ext)||type=='script'&&ext=='.js')
@@ -29,40 +30,38 @@ const getFiles = async function(data,type) {
 }
 const fixPath = function(url) {
 	let parsed = path.parse(url);
-	return url.replace(parsed.dir+'/'+parsed.base,'/'+parsed.base);
+	return url.replace(parsed.dir+'/'+parsed.base,parsed.base);
 }
 export default {
 	async asyncData({ params }) {
 		let { data } = await axios.get('http://www.newomics.com');
-		//let matches = data.match(/\bhttps?:\/\/\S+/gi);
-		//let clean = [];
-		//matches.forEach(match=>{
-		//	clean.push(prep(match));
-		//});
-		//let imgMime = ['.jpg','.png','.gif','.svg'];
+		const $ = cheerio.load(data);
+		$('html').find('script').each(function(){
+			$(this).remove();
+		});
+		data = $('body').html();
+		let matches = data.match(/\bhttps?:\/\/\S+/gi);
 		let clean = await getFiles(data,'all');
 		clean.forEach(async url=>{
-			url = prep(url).split('?')[0].replace('https','http');
+			url = prep(url).split('?')[0];
 			let ext = path.extname(url);
+			let imgMime = ['.jpg','.png','.gif','.svg'];
 			if(imgMime.includes(ext)) {
 				let parsed = path.parse(url);
 				data = data.replace(parsed.dir+'/'+parsed.base,parsed.base);
+			} else if (ext=='.js') {
+				let parsed = path.parse(url);
+				//data = data.replace(url,'');
 			}
+
 		});
 
 		return { data: data }
 	},
-	async head() {
-		let { data } = await axios.get('http://www.newomics.com');
-		let clean = await getFiles(data,'script');
-		let scripts = [];
-		clean.forEach(url=>{
-			url = fixPath(url);
-			scripts.push({src: url});
-		});
-		console.log(scripts);
+	head() {
+
 		return {
-			script: scripts
+			link: [{rel: 'stylesheet', href: 'cc-style.css'}]
 		}
 	}
 }
