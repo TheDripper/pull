@@ -25,7 +25,7 @@ config.dev = !(process.env.NODE_ENV === 'production')
 app.use('/',async function(req,res,next) {
 	  //var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
 	  if(req.url=='/') {
-        	let { data } = await axios('http://www.newomics.com');
+        	let { data } = await axios('http://newomics.staging.wpengine.com');
 		let clean = [];
 		let mime = ['.png','.jpg','.gif','.svg','.css','.js'];
 		urls(data).forEach(url=>{
@@ -53,12 +53,19 @@ app.use('/',async function(req,res,next) {
 
 app.use('/css',function(req,res,next){
 	let css = [];
+	let js = [];
 	fs.readdirSync('./static/').forEach(file=>{
 		ext = path.extname(file);
 		if(ext=='.css')
 			css.push(file);
+		else if(ext=='.js')
+			js.push(file);
 	});
-	res.send(JSON.stringify(css));
+	let data = {
+		css: css,
+		js: js
+	}
+	res.send(JSON.stringify(data));
 });
 
 async function start() {

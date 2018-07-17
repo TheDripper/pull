@@ -34,7 +34,7 @@ const fixPath = function(url) {
 }
 export default {
 	async asyncData({ params }) {
-		let { data } = await axios.get('http://www.newomics.com');
+		let { data } = await axios.get('http://newomics.staging.wpengine.com');
 		const $ = cheerio.load(data);
 		$('html').find('script').each(function(){
 			$(this).remove();
@@ -51,18 +51,40 @@ export default {
 				data = data.replace(parsed.dir+'/'+parsed.base,parsed.base);
 			} else if (ext=='.js') {
 				let parsed = path.parse(url);
-				//data = data.replace(url,'');
+				data = data.replace(url,'');
 			}
-
 		});
 
 		return { data: data }
 	},
 	head() {
-
+		let styles = this.$store.state.styles;
+		let jsFiles = this.$store.state.scripts;
+		let links = [];
+		let scripts = [];
+		styles.forEach(style=>{
+			var sheet = {
+				rel: 'stylesheet',
+				href: style
+			}
+			links.push(sheet);
+		});
+		jsFiles.forEach(file=>{
+			var js = {
+				src: file
+			}
+			scripts.push(js);
+		});
+		console.log(scripts);
 		return {
-			link: [{rel: 'stylesheet', href: 'cc-style.css'}]
+			script: scripts,
+			link: links
 		}
+	},
+	async fetch({ store, params }) {
+		let { data } = await axios.get('http://localhost:3000/css');
+		store.commit('loadStyles',data.css);
+		store.commit('loadScripts',data.js);
 	}
 }
 </script>
