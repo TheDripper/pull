@@ -57,7 +57,7 @@ app.use('/css',function(req,res,next){
 	fs.readdirSync('./static/').forEach(file=>{
 		ext = path.extname(file);
 		if(ext=='.css')
-			css.push(file);
+			css.push('/'+file);
 		else if(ext=='.js')
 			js.push(file);
 	});

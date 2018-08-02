@@ -75,7 +75,6 @@ export default {
 			}
 			scripts.push(js);
 		});
-		console.log(scripts);
 		return {
 			script: scripts,
 			link: links
