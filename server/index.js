@@ -22,10 +22,15 @@ app.set('port', port)
 let config = require('../nuxt.config.js')
 config.dev = !(process.env.NODE_ENV === 'production')
 
-app.use('/',async function(req,res,next) {
-	  //var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-	  if(req.url=='/') {
-        	let { data } = await axios('http://newomics.staging.wpengine.com');
+app.use('/',function(req,res,next){
+	console.log('rrr')
+	next()
+})
+
+app.use('/scrapes/:page',async function(req,res,next) {
+	console.log(req.params.page);
+	if(path.extname(req.params.page)!='.js') {
+        	let { data } = await axios('http://'+req.params.page);
 		let clean = [];
 		let mime = ['.png','.jpg','.gif','.svg','.css','.js'];
 		urls(data).forEach(url=>{
@@ -47,7 +52,8 @@ app.use('/',async function(req,res,next) {
 			} catch(err) {
 			}
 		});
-	  }
+		console.log('okay');
+	}
         next();
 })
 
@@ -59,14 +65,24 @@ app.use('/css',function(req,res,next){
 		if(ext=='.css')
 			css.push('/'+file);
 		else if(ext=='.js')
-			js.push(file);
+			js.push('/'+file);
 	});
 	let data = {
 		css: css,
 		js: js
 	}
 	res.send(JSON.stringify(data));
-});
+})
+
+app.use('/urls',function(req,res,next){
+	let urls = JSON.parse(fs.readFileSync('urls.txt','utf8'))
+	res.send(urls);
+})
+
+app.use('/test',async function(req,res,next){
+	let { data }  = await axios('http://localhost:3000/urls');
+	res.send(data);
+})
 
 async function start() {
   // Init Nuxt.js

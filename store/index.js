@@ -26,8 +26,6 @@ const createStore = () => {
 		let sanitize = require('sanitize-filename');
 		let strip = require('striptags');
 		let cheerio = require('cheerio');
-		console.log('AAO');
-		console.log(context.params.page);
 		let { data } = await axios.get('http://'+context.params.page);
 		const $ = cheerio.load(data);
 
@@ -73,7 +71,6 @@ const createStore = () => {
 				data = data.replace(url,'');
 			}
 		});
-		console.log(data);
 		commit('mark',data);
 	    }
     }

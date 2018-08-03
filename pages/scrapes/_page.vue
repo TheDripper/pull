@@ -33,9 +33,15 @@ export default {
 	},
 	async fetch({ store, params }) {
 		let axios = require('axios');
-		let { data } = await axios.get('http://localhost:3000/css');
-		store.commit('loadStyles',data.css);
-		store.commit('loadScripts',data.js);
+		try {
+			let { data } = await axios.get('http://localhost:3000/css');
+			console.log(data.css);
+			console.log(data.js);
+			store.commit('loadStyles',data.css);
+			store.commit('loadScripts',data.js);
+		} catch(err) {
+			console.log(err)
+		}
 	}
 }
 </script>

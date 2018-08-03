@@ -1,5 +1,5 @@
 const pkg = require('./package')
-
+const axios = require('axios');
 module.exports = {
   mode: 'universal',
 
@@ -71,4 +71,14 @@ module.exports = {
       }
     }
   }
+  //generate: {
+  //        routes: function() {
+  //      	  return axios.get('http://localhost:3000/urls').
+  //      	  then((res)=>{
+  //      		  return res.data.map((url)=>{
+  //      			  return '/scrapes/'+url
+  //      		  })
+  //      	  })
+  //        }
+  //}
 }
